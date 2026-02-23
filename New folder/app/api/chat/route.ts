@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateAvikaResponse } from "@/lib/avika";
-import { Message } from "@/types";
+// Fixed paths to bypass the "Module not found" error
+import { generateAvikaResponse } from "../../../lib/avika";
+import { Message } from "../../../types";
 
 type ChatRequest = {
   messages: Message[];
@@ -17,6 +18,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // This now uses your MONGODB_URI environment variable for session memory
     const result = await generateAvikaResponse(body.messages);
 
     return NextResponse.json(result, { status: 200 });
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
     console.error("Error generating Avika response:", error);
     return NextResponse.json(
       {
-        text: "I'm having trouble connecting. Let's pause and try again soon.",
+        text: "I'm having trouble connecting to my database. Let's try again in a second.",
         videos: [],
         mood: {
           dominantMood: "general",
@@ -36,4 +38,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
